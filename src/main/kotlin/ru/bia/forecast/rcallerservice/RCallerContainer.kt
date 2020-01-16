@@ -14,31 +14,28 @@ class RCallerContainer {
     }
 
     fun obtain() {
-    //    super.obtain()
         rcode.addRCode("rm(list=ls())")
         rcode.addRCode(template)
         rcode.addRCode("library(\"forecast\")")
         rcode.addRCode("library(\"forecTheta\")")
     }
 
-    fun release(e: Throwable?) {
-//        if (exists err = e) {
-//            err.printStackTrace();
-//        }
+    fun release() {
         rcode.clear();
         rcaller.deleteTempFiles();
-//        super.release(e);
     }
 
     fun runAndReturnResultOnline(source: String, resultName: String) {
-        obtain()
         rcode.addRCode(source);
         rcaller.runAndReturnResultOnline(resultName);
-        release(null)
     }
 
     fun getDoubleArrayResult(resultName: String): DoubleArray? {
         return rcaller.parser.getAsDoubleArray(resultName);
     }
 
+    fun close() {
+        rcaller.stopStreamConsumers()
+        rcaller.StopRCallerOnline()
+    }
 }
