@@ -26,7 +26,7 @@ class RCallerService {
      */
     @Path("/double_array")
     @POST
-    @Consumes("text/plain")
+    @Consumes("application/x-www-form-urlencoded", "text/plain")
     @Produces("text/csv")
     fun calculateDoubleArray(script: String, @QueryParam("result") resultNameParam: String?): String {
         var rCallerContainer: RCallerContainer? = null
@@ -68,7 +68,6 @@ class RCallerService {
     @Path("/shutdown")
     @DELETE
     fun terminate(request: ContainerRequest): String {
-        println(request.absolutePath.host)
         val message = "RCallerService is shutting down!"
         return if (request.absolutePath.host == "127.0.0.1") {
             Thread { ->
