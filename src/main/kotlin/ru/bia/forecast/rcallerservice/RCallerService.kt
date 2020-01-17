@@ -2,6 +2,7 @@ package ru.bia.forecast.rcallerservice
 
 import org.apache.commons.pool2.impl.GenericObjectPool
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig
+import org.glassfish.jersey.server.ContainerRequest
 import javax.ws.rs.*
 
 fun createRCallerPool(expirationTime: Int): GenericObjectPool<RCallerContainer> {
@@ -39,6 +40,44 @@ class RCallerService {
             if (rCallerContainer != null) {
                 rCallerPool.returnObject(rCallerContainer)
             }
+        }
+    }
+
+    /**
+     * Kubernetes readiness probe
+     */
+    @Path("/ready")
+    @GET
+    fun readinessProbe(): String {
+        return "Server is ready\n";
+    }
+
+    /**
+     * Kubernetes liveness probe
+     */
+    @Path("/alive")
+    @GET
+    fun livenessProbe(): String {
+        return "Server is alive\n";
+    }
+
+    /**
+     * Gracefully shutdown for complete jobs
+     */
+    @Path("/shutdown")
+    @DELETE
+    fun terminate(request: ContainerRequest): String {
+        println(request.absolutePath.host)
+        val message = "RCallerService is shutting down!"
+        if (request.absolutePath.host == "127.0.0.1") {
+            Thread( { ->
+                println(message)
+                Thread.sleep(1000)
+                System.exit( 0)
+            }).start()
+            return message
+        } else {
+            return ""
         }
     }
 }
