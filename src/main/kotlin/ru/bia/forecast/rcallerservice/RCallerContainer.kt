@@ -3,14 +3,14 @@ package ru.bia.forecast.rcallerservice
 import com.github.rcaller.rstuff.RCaller
 import com.github.rcaller.rstuff.RCode
 
-class RCallerContainer {
+class RCallerContainer() {
 
-    val rcaller = RCaller.create()
-    val rcode = RCode.create()
-    val template = rcode.toString();
+    private val rcaller = RCaller.create()
+    private val rcode = RCode.create()
+    private val template = rcode.toString();
 
-    constructor () {
-        rcaller.rCode = rcode;
+    init {
+        rcaller.rCode = rcode
     }
 
     fun obtain() {
@@ -21,17 +21,17 @@ class RCallerContainer {
     }
 
     fun release() {
-        rcode.clear();
-        rcaller.deleteTempFiles();
+        rcode.clear()
+        rcaller.deleteTempFiles()
     }
 
     fun runAndReturnResultOnline(source: String, resultName: String) {
-        rcode.addRCode(source);
-        rcaller.runAndReturnResultOnline(resultName);
+        rcode.addRCode(source)
+        rcaller.runAndReturnResultOnline(resultName)
     }
 
     fun getDoubleArrayResult(resultName: String): DoubleArray? {
-        return rcaller.parser.getAsDoubleArray(resultName);
+        return rcaller.parser.getAsDoubleArray(resultName)
     }
 
     fun close() {

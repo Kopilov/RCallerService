@@ -19,7 +19,7 @@ fun main(args: Array<String>) {
     App(commandLine).run()
 }
 
-class App(val commandLine: CommandLine) {
+class App(private val commandLine: CommandLine) {
     fun run() {
         try {
             val port = commandLine.getOptionValue("port", "8080")

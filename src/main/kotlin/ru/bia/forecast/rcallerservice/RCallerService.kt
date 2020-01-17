@@ -4,6 +4,7 @@ import org.apache.commons.pool2.impl.GenericObjectPool
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig
 import org.glassfish.jersey.server.ContainerRequest
 import javax.ws.rs.*
+import kotlin.system.exitProcess
 
 fun createRCallerPool(expirationTime: Int): GenericObjectPool<RCallerContainer> {
     val poolConfig = GenericObjectPoolConfig<RCallerContainer>()
@@ -69,15 +70,15 @@ class RCallerService {
     fun terminate(request: ContainerRequest): String {
         println(request.absolutePath.host)
         val message = "RCallerService is shutting down!"
-        if (request.absolutePath.host == "127.0.0.1") {
-            Thread( { ->
+        return if (request.absolutePath.host == "127.0.0.1") {
+            Thread { ->
                 println(message)
                 Thread.sleep(1000)
-                System.exit( 0)
-            }).start()
-            return message
+                exitProcess( 0)
+            }.start()
+            message
         } else {
-            return ""
+            ""
         }
     }
 }
