@@ -14,7 +14,7 @@ class RCallerFactory: PooledObjectFactory<RCallerContainer> {
     }
 
     override fun validateObject(p: PooledObject<RCallerContainer>?): Boolean {
-        return p != null && p.`object` != null
+        return p != null && p.`object` != null && p.`object`.hasNoZombieCalculation()
     }
 
     override fun activateObject(p: PooledObject<RCallerContainer>) {

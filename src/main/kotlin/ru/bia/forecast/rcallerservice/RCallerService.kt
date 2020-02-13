@@ -4,12 +4,16 @@ import org.apache.commons.pool2.impl.GenericObjectPool
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig
 import org.glassfish.jersey.server.ContainerRequest
 import javax.ws.rs.*
+import javax.ws.rs.core.Response
 import kotlin.system.exitProcess
 
 fun createRCallerPool(expirationTime: Int): GenericObjectPool<RCallerContainer> {
     val poolConfig = GenericObjectPoolConfig<RCallerContainer>()
     poolConfig.setTimeBetweenEvictionRunsMillis(expirationTime * 1000L);
     poolConfig.setMinEvictableIdleTimeMillis(expirationTime * 1000L);
+    poolConfig.testOnBorrow = true
+    poolConfig.testOnCreate = true
+    poolConfig.testOnReturn = true
     return GenericObjectPool<RCallerContainer>(RCallerFactory(), poolConfig);
 }
 
@@ -22,21 +26,33 @@ class RCallerService {
     }
 
     /**
-     * Calculate R script with double array output
+     * Calculate R script with double array output written in [resultNameParam] variable.
+     * If [timeout] is not null, wait not more than this period (in seconds). Return 504 HTTP status if expired.
      */
     @Path("/double_array")
     @POST
     @Consumes("application/x-www-form-urlencoded", "text/plain")
     @Produces("text/csv")
-    fun calculateDoubleArray(script: String, @QueryParam("result") resultNameParam: String?): String {
+    fun calculateDoubleArray(
+        script: String,
+        @QueryParam("result") resultNameParam: String?,
+        @QueryParam("timeout") timeout: Int?
+    ): Response {
         var rCallerContainer: RCallerContainer? = null
         try {
             rCallerContainer = rCallerPool.borrowObject()
             val resultName = resultNameParam ?: "result"
-            rCallerContainer.runAndReturnResultOnline(script, resultName)
-            val doubleArrayResult: DoubleArray = rCallerContainer.getDoubleArrayResult(resultName)!!
-            val stringArrayResult = doubleArrayResult.map { d: Double -> "$d" }
-            return java.lang.String.join(";", stringArrayResult) + "\n"
+            val resultReady = rCallerContainer.runAndReturnResultOnline(script, resultName, timeout)
+            if (resultReady) {
+                val doubleArrayResult: DoubleArray = rCallerContainer.getDoubleArrayResult(resultName)!!
+                val stringArrayResult = doubleArrayResult.map { d: Double -> "$d" }
+                return Response.ok().entity(java.lang.String.join(";", stringArrayResult) + "\n").build()
+            } else {
+                return Response.status(Response.Status.GATEWAY_TIMEOUT).entity("Timeout $timeout seconds expired").build()
+            }
+        } catch (e: Throwable) {
+            e.printStackTrace();
+            return Response.status(Response.Status.fromStatusCode(500)).entity(e.message).build()
         } finally {
             if (rCallerContainer != null) {
                 rCallerPool.returnObject(rCallerContainer)

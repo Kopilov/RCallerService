@@ -3,7 +3,7 @@
 . build.sh
 
 IMAGE_NAME=gitlab.dellin.ru:5005/forecast/rcallerservice/kotlin
-IMAGE_VERSION=1.1.7
+IMAGE_VERSION=1.1.8
 
 LOCAL_PROXY=http://10.126.6.77:3128
 
