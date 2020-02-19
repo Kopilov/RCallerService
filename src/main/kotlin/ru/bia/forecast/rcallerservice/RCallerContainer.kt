@@ -18,8 +18,12 @@ class RCallerContainer() {
     fun obtain() {
         rcode.addRCode("rm(list=ls())")
         rcode.addRCode(template)
-        rcode.addRCode("library(\"forecast\")")
-        rcode.addRCode("library(\"forecTheta\")")
+        rcode.addRCode("require(\"forecast\")")
+        rcode.addRCode("require(\"forecTheta\")")
+        rcode.addRCode("require(\"tsoutliers\")")
+        rcode.addRCode("require(\"prophet\")")
+        rcode.addRCode("require(\"fasster\")")
+        rcode.addRCode("require(\"MAPA\")")
     }
 
     fun release() {
@@ -35,7 +39,7 @@ class RCallerContainer() {
         rcode.addRCode(source)
         if (timeout is Int) {
             //start calculation in separate thread
-            val rCallerCalculation = Thread ({rcaller.runAndReturnResultOnline(resultName)})
+            val rCallerCalculation = Thread {rcaller.runAndReturnResultOnline(resultName)}
             rCallerCalculation.start()
             val startedAt = currentTimeMillis();
             //sleep while timeout not expired and calculation actually performs
@@ -46,8 +50,8 @@ class RCallerContainer() {
                 //calculation still performs => timeout expired
                 //Invalidate this RCallerContainer
                 hasZombieCalculation = true
-                //try to kill process after return
-                Thread ({close()}).start()
+                //Kill process after return
+                Thread ({rcaller.StopRCallerAsync()}).start()
                 return false
             } else {
                 //OK
