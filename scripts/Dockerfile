@@ -1,20 +1,18 @@
-ARG DOCKER_IMAGE=gitlab.dellin.ru:5005/omoim_developers/javadocker/centos/java_build:2019-08-01_17-08
+ARG DOCKER_IMAGE=gitlab.dellin.ru:5005/omoim_developers/javadocker/adoptopenjdk:11.0.6_10-jdk-hotspot-eoan
 FROM $DOCKER_IMAGE
 
-COPY epel.repo /etc/yum.repos.d
+# Install R from CRAN
+RUN apt-get -y update && apt-get install -y curl r-base r-base-dev r-cran-curl r-cran-devtools r-cran-forecast
 
-RUN yum update -y && yum install -y R curl libcurl-devel
-RUN mkdir -p /usr/share/doc/R-3.6.0/html && cp /usr/lib64/R/library/stats/html/R.css /usr/share/doc/R-3.6.0/html/
-
-RUN echo 'install.packages("curl", repos="http://cran.r-project.org")' | R --no-save
-RUN echo 'install.packages("forecast", repos="http://cran.r-project.org")' | R --no-save
 RUN echo 'install.packages("forecTheta", repos="http://cran.r-project.org")' | R --no-save
 RUN echo 'install.packages("tsoutliers", repos="http://cran.r-project.org")' | R --no-save
-RUN echo 'install.packages("prophet", repos="http://cran.r-project.org")' | R --no-save
-RUN echo 'install.packages("fasster", repos="http://cran.r-project.org")' | R --no-save
 RUN echo 'install.packages("MAPA", repos="http://cran.r-project.org")' | R --no-save
+RUN echo 'install.packages("prophet", repos="http://cran.r-project.org")' | R --no-save
 
-RUN yum remove -y libcurl-devel && yum autoremove -y
+#RUN echo 'install.packages("fasster", repos="http://cran.r-project.org")' | R --no-save
+##or
+#RUN echo 'install.packages("fabletools", repos="http://cran.r-project.org")' | R --no-save
+#RUN echo 'devtools::install_github("tidyverts/fasster")' | R --no-save
 
 COPY rcallerservice.sh /tmp
 COPY rcallerservice.jar /tmp

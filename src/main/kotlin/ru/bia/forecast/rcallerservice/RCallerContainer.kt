@@ -22,7 +22,6 @@ class RCallerContainer() {
         rcode.addRCode("require(\"forecTheta\")")
         rcode.addRCode("require(\"tsoutliers\")")
         rcode.addRCode("require(\"prophet\")")
-        rcode.addRCode("require(\"fasster\")")
         rcode.addRCode("require(\"MAPA\")")
     }
 

@@ -9,7 +9,7 @@ version '1.2.0'
 
 def jerseyVersion = '2.29.1'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 11
 
 repositories {
     mavenCentral()
@@ -27,6 +27,7 @@ dependencies {
     //RCaller
     //We use customised upstream version. Actual source is here: https://github.com/Kopilov/rcaller/tree/stopasync
     //(PR https://github.com/jbytecode/rcaller/pull/36 had been opened)
+    //upd: PR is merged, https://github.com/jbytecode/rcaller/tree/master can be used, but is still not released today
     //Build it at first, put to mavenLocal
     compile group: 'com.github.jbytecode', name: 'RCaller', version: '3.0.1-SNAPSHOT'
 
@@ -43,10 +44,10 @@ dependencies {
 }
 
 compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "11"
 }
 compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "11"
 }
 
 mainClassName = "ru.bia.forecast.rcallerservice.MainKt"
