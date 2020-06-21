@@ -5,9 +5,9 @@ plugins {
 }
 
 group 'ru.bia.forecast.rcallerservice'
-version '1.2.0'
+version '1.2.1'
 
-def jerseyVersion = '2.29.1'
+def jerseyVersion = '2.31'
 
 sourceCompatibility = 11
 
@@ -26,13 +26,12 @@ dependencies {
 
     //RCaller
     //We use customised upstream version. Actual source is here: https://github.com/Kopilov/rcaller/tree/stopasync
-    //(PR https://github.com/jbytecode/rcaller/pull/36 had been opened)
-    //upd: PR is merged, https://github.com/jbytecode/rcaller/tree/master can be used, but is still not released today
-    //Build it at first, put to mavenLocal
+    //(PR https://github.com/jbytecode/rcaller/pull/37 had been opened)
     compile group: 'com.github.jbytecode', name: 'RCaller', version: '3.0.1-SNAPSHOT'
 
     //Java EE API
-    compile group: 'javax.servlet', name: 'servlet-api', version: '2.5'
+    compile group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
+    compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
     compile group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.1.1'
     compile group: 'javax.json.bind', name: 'javax.json.bind-api', version: '1.0'
 

@@ -1,4 +1,5 @@
 ARG DOCKER_IMAGE=gitlab.dellin.ru:5005/omoim_developers/javadocker/adoptopenjdk:11.0.6_10-jdk-hotspot-eoan
+#ARG DOCKER_IMAGE=gitlab.dellin.ru:5005/omoim_developers/javadocker/adoptopenjdk:8u242-jdk-hotspot-eoan
 FROM $DOCKER_IMAGE
 
 # Install R from CRAN

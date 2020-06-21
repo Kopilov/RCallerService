@@ -3,6 +3,7 @@ package ru.bia.forecast.rcallerservice
 import com.github.rcaller.rstuff.RCaller
 import com.github.rcaller.rstuff.RCode
 import java.lang.System.currentTimeMillis
+import java.util.*
 
 class RCallerContainer() {
 
@@ -66,8 +67,21 @@ class RCallerContainer() {
         return rcaller.parser.getAsDoubleArray(resultName)
     }
 
+    fun getStringArrayResult(resultName: String): Array<out String>? {
+        return rcaller.parser.getAsStringArray(resultName)
+    }
+
+    fun getStringResult(resultName: String): String? {
+        val joiner = StringJoiner("")
+        getStringArrayResult(resultName)?.map { element -> joiner.add(element) }
+        return joiner.toString()
+    }
+
     fun close() {
-        rcaller.stopStreamConsumers()
-        rcaller.StopRCallerOnline()
+        if (hasNoZombieCalculation()) {
+            rcaller.stopStreamConsumers()
+            rcaller.StopRCallerOnline()
+        }
+        rcaller.deleteTempFiles()
     }
 }

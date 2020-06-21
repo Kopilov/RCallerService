@@ -3,7 +3,7 @@
 . build.sh
 
 IMAGE_NAME=gitlab.dellin.ru:5005/forecast/rcallerservice
-IMAGE_VERSION=1.2.0
+IMAGE_VERSION=1.2.1
 
 LOCAL_PROXY=http://10.126.6.77:3128
 
