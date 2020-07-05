@@ -1,4 +1,4 @@
-package ru.bia.forecast.rcallerservice
+package com.gitlab.kopilov.rcallerservice
 
 import com.github.rcaller.rstuff.RCaller
 import com.github.rcaller.rstuff.RCode

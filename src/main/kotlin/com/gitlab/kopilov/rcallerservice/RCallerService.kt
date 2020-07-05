@@ -1,4 +1,4 @@
-package ru.bia.forecast.rcallerservice
+package com.gitlab.kopilov.rcallerservice
 
 import org.apache.commons.pool2.impl.GenericObjectPool
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig

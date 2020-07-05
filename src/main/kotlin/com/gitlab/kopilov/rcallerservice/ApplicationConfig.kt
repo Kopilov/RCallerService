@@ -1,4 +1,4 @@
-package ru.bia.forecast.rcallerservice
+package com.gitlab.kopilov.rcallerservice
 
 import org.glassfish.jersey.jackson.JacksonFeature
 import org.glassfish.jersey.server.ResourceConfig

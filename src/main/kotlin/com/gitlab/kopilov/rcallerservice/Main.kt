@@ -1,4 +1,4 @@
-package ru.bia.forecast.rcallerservice
+package com.gitlab.kopilov.rcallerservice
 
 import java.io.IOException
 import java.net.URI
