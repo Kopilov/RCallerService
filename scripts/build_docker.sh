@@ -27,6 +27,6 @@ IMAGE_VERSION=1.0.0
 
 #docker build --build-arg http_proxy=${LOCAL_PROXY} --build-arg https_proxy=${LOCAL_PROXY} -t ${IMAGE_NAME}:${IMAGE_VERSION} .
 docker build -t ${IMAGE_NAME}:${IMAGE_VERSION} .
-#docker push ${IMAGE_NAME}:${IMAGE_VERSION}
+docker push ${IMAGE_NAME}:${IMAGE_VERSION}
 docker image tag ${IMAGE_NAME}:${IMAGE_VERSION} ${IMAGE_NAME}:latest
-#docker push ${IMAGE_NAME}:latest
+docker push ${IMAGE_NAME}:latest
