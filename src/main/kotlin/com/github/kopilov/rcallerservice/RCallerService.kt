@@ -1,4 +1,4 @@
-package com.gitlab.kopilov.rcallerservice
+package com.github.kopilov.rcallerservice
 
 import org.apache.commons.pool2.impl.GenericObjectPool
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig

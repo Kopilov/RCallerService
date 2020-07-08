@@ -1,4 +1,4 @@
-package com.gitlab.kopilov.rcallerservice
+package com.github.kopilov.rcallerservice
 
 import org.glassfish.jersey.jackson.JacksonFeature
 import org.glassfish.jersey.server.ResourceConfig
