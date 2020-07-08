@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'com.gitlab.kopilov.rcallerservice'
-version '1.2.1'
+version '1.0.0'
 
 def jerseyVersion = '2.31'
 
@@ -50,7 +50,7 @@ compileTestKotlin {
     kotlinOptions.jvmTarget = "11"
 }
 
-mainClassName = "ru.bia.forecast.rcallerservice.MainKt"
+mainClassName = "com.github.kopilov.rcallerservice.MainKt"
 
 jar {
     manifest {

@@ -17,14 +17,15 @@ RUN dpkg-reconfigure -f noninteractive tzdata
 RUN apt-get install -yq openjdk-11-jre-headless
 # Install R
 RUN apt-get install -yq r-base
+
 # Install necessary R modules from APT
-RUN apt-get install -yq r-base-dev r-cran-curl r-cran-devtools r-cran-forecast
+#RUN apt-get install -yq r-base-dev r-cran-curl r-cran-devtools r-cran-forecast
 
 # Install necessary R modules from CRAN
-RUN echo 'install.packages("forecTheta", repos="http://cran.r-project.org")' | R --no-save
-RUN echo 'install.packages("tsoutliers", repos="http://cran.r-project.org")' | R --no-save
-RUN echo 'install.packages("MAPA", repos="http://cran.r-project.org")' | R --no-save
-RUN echo 'install.packages("prophet", repos="http://cran.r-project.org")' | R --no-save
+#RUN echo 'install.packages("forecTheta", repos="http://cran.r-project.org")' | R --no-save
+#RUN echo 'install.packages("tsoutliers", repos="http://cran.r-project.org")' | R --no-save
+#RUN echo 'install.packages("MAPA", repos="http://cran.r-project.org")' | R --no-save
+#RUN echo 'install.packages("prophet", repos="http://cran.r-project.org")' | R --no-save
 
 #RUN echo 'install.packages("fasster", repos="http://cran.r-project.org")' | R --no-save
 ##or
