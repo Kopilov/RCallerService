@@ -19,7 +19,7 @@ Output format: csv
 
 # Example
 
-Start the service (in Docker by `docker run -it --net=host kopilov/rcallerservice:1.0.0` or directly on the system by `java -jar rcallerservice.jar`)
+Start the service (in Docker by `docker run -it --net=host kopilov/rcallerservice:1.0.0` or directly on the system by `java -jar rcallerservice.jar  --port=8080`)
 
 Prepare the script such as
 ```
