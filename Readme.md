@@ -8,7 +8,7 @@ The Docker image (built manually from this [Dockerfile](https://github.com/Kopil
 
 For executing a script send it as a body of POST request to URL
 ```
-/<result_type>?result=<result_name>
+/<result_type>?result=<result_name>[&timeout=<timeout_value_in_seconds>]
 ```
 Supported result types:
 
