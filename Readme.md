@@ -1,9 +1,9 @@
 # RCallerService
 RCallerService is a microservice for running R-scripts in forecast models written in different other languages.
 
-Based on https://github.com/jbytecode/rcaller/tree/master/RCaller library (for building this project from sources build it locally by `mvn install` at first).
+Based on https://github.com/jbytecode/rcaller/tree/master/RCaller library.
 
-If you are running it without Docker, you shoult also install R itself.  
+If you are running it without Docker, you should also install R itself.
 The Docker image (built manually from this [Dockerfile](https://github.com/Kopilov/RCallerService/blob/master/scripts/Dockerfile))can be found at https://hub.docker.com/r/kopilov/rcallerservice
 
 For executing a script send it as a body of POST request to URL

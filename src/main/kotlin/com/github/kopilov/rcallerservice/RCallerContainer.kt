@@ -51,7 +51,7 @@ class RCallerContainer() {
                 //Invalidate this RCallerContainer
                 hasZombieCalculation = true
                 //Kill process after return
-                Thread ({rcaller.StopRCallerAsync()}).start()
+                Thread ({rcaller.stopRCallerAsync()}).start()
                 return false
             } else {
                 //OK
@@ -80,7 +80,7 @@ class RCallerContainer() {
     fun close() {
         if (hasNoZombieCalculation()) {
             rcaller.stopStreamConsumers()
-            rcaller.StopRCallerOnline()
+            rcaller.stopRCallerOnline()
         }
         rcaller.deleteTempFiles()
     }
