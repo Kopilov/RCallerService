@@ -32,8 +32,11 @@ RUN apt-get install -yq r-base
 #RUN echo 'install.packages("fabletools", repos="http://cran.r-project.org")' | R --no-save
 #RUN echo 'devtools::install_github("tidyverts/fasster")' | R --no-save
 
-COPY rcallerservice.sh /tmp
-COPY rcallerservice.jar /tmp
+COPY .  /
+
+RUN ./gradlew build && find build -name "rcallerservice*jar" -exec cp {} /tmp/rcallerservice.jar \;
+RUN cp /scripts/rcallerservice.sh /tmp
+
 EXPOSE 8080
 
 WORKDIR /tmp
