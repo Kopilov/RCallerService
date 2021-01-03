@@ -1,4 +1,4 @@
-ARG DOCKER_IMAGE=kopilov/rcallerservice:base
+ARG DOCKER_IMAGE=kopilov/rcallerservice:base-1.0.1
 FROM $DOCKER_IMAGE
 
 COPY .  /
