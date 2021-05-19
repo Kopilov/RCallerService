@@ -1,5 +1,6 @@
-package com.github.kopilov.rcallerservice
+package com.github.kopilov.rcallerpool
 
+import com.github.kopilov.rcallerpool.RCallerContainer
 import org.apache.commons.pool2.PooledObject
 import org.apache.commons.pool2.PooledObjectFactory
 import org.apache.commons.pool2.impl.DefaultPooledObject

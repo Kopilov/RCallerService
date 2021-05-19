@@ -1,25 +1,18 @@
 package com.github.kopilov.rcallerservice
 
-import org.apache.commons.pool2.impl.GenericObjectPool
-import org.apache.commons.pool2.impl.GenericObjectPoolConfig
 import org.glassfish.jersey.server.ContainerRequest
-import java.lang.Runtime.getRuntime
-import java.util.*
-import javax.ws.rs.*
+import com.github.kopilov.rcallerpool.RCallerContainer
+import com.github.kopilov.rcallerpool.createRCallerPool
+import java.util.StringJoiner
+import javax.ws.rs.Path
+import javax.ws.rs.POST
+import javax.ws.rs.GET
+import javax.ws.rs.DELETE
+import javax.ws.rs.Consumes
+import javax.ws.rs.Produces
+import javax.ws.rs.QueryParam
 import javax.ws.rs.core.Response
 import kotlin.system.exitProcess
-
-fun createRCallerPool(expirationTime: Int): GenericObjectPool<RCallerContainer> {
-    val poolConfig = GenericObjectPoolConfig<RCallerContainer>()
-    poolConfig.timeBetweenEvictionRunsMillis = expirationTime * 1000L
-    poolConfig.minEvictableIdleTimeMillis = expirationTime * 1000L
-    poolConfig.testOnBorrow = true
-    poolConfig.testOnCreate = true
-    poolConfig.testOnReturn = true
-    poolConfig.maxIdle = getRuntime().availableProcessors()
-    poolConfig.maxTotal = getRuntime().availableProcessors() * 2
-    return GenericObjectPool(RCallerFactory(), poolConfig);
-}
 
 @Path("")
 class RCallerService {

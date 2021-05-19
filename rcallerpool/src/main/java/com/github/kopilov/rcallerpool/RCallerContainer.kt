@@ -1,4 +1,4 @@
-package com.github.kopilov.rcallerservice
+package com.github.kopilov.rcallerpool
 
 import com.github.rcaller.rstuff.RCaller
 import com.github.rcaller.rstuff.RCode

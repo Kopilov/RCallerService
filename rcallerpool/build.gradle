@@ -1,0 +1,14 @@
+plugins {
+    id 'maven-publish'
+}
+
+dependencies {
+    //Kotlin
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+
+    //Commons pool
+    api 'org.apache.commons:commons-pool2:2.9.0'
+
+    //RCaller
+    implementation group: 'com.github.jbytecode', name: 'RCaller', version: '3.0.2'
+}
