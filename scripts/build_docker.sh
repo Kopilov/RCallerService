@@ -21,7 +21,7 @@ cd "${DIR}"
 . build.sh
 
 IMAGE_NAME=kopilov/rcallerservice
-IMAGE_VERSION=1.0.0
+IMAGE_VERSION=1.0.1
 
 #LOCAL_PROXY=http://10.126.6.77:3128
 
