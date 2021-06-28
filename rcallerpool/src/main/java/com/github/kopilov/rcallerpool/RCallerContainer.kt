@@ -1,20 +1,15 @@
 package com.github.kopilov.rcallerpool
 
 import com.github.rcaller.rstuff.RCaller
-import com.github.rcaller.rstuff.RCode
 import java.lang.System.currentTimeMillis
-import java.util.*
+import java.util.StringJoiner
 
-class RCallerContainer() {
+class RCallerContainer(val rCallerFactory: RCallerFactory) {
 
-    private val rcaller = RCaller.create()
-    private val rcode = RCode.create()
-    private val template = rcode.toString();
+    private val rcaller = rCallerFactory.createRCaller()
+    private val rcode = rcaller.rCode
+    private val template: String = rcode.toString()
     private var hasZombieCalculation = false
-
-    init {
-        rcaller.rCode = rcode
-    }
 
     fun obtain() {
         rcode.addRCode("rm(list=ls())")
@@ -29,6 +24,10 @@ class RCallerContainer() {
     fun release() {
         rcode.clear()
         rcaller.deleteTempFiles()
+    }
+
+    fun getRCaller(): RCaller {
+        return rcaller
     }
 
     fun hasNoZombieCalculation(): Boolean {
@@ -65,6 +64,14 @@ class RCallerContainer() {
 
     fun getDoubleArrayResult(resultName: String): DoubleArray? {
         return rcaller.parser.getAsDoubleArray(resultName)
+    }
+
+    fun getDoubleMatrixResult(resultName: String): Array<out DoubleArray>? {
+        return rcaller.parser.getAsDoubleMatrix(resultName)
+    }
+
+    fun getIntArrayResult(resultName: String): IntArray? {
+        return rcaller.parser.getAsIntArray(resultName)
     }
 
     fun getStringArrayResult(resultName: String): Array<out String>? {

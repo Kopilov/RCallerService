@@ -10,5 +10,9 @@ dependencies {
     api 'org.apache.commons:commons-pool2:2.9.0'
 
     //RCaller
-    implementation group: 'com.github.jbytecode', name: 'RCaller', version: '3.0.2'
+    api group: 'com.github.jbytecode', name: 'RCaller', version: '4.0.0-SNAPSHOT'
+
+
+    implementation "org.apache.arrow:arrow-vector:4.0.1"
+    implementation "org.apache.arrow:arrow-memory-netty:4.0.1"
 }
