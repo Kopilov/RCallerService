@@ -4,11 +4,11 @@ plugins {
 
 dependencies {
     //Kotlin
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
 
     //Commons pool
-    api 'org.apache.commons:commons-pool2:2.9.0'
+    api 'org.apache.commons:commons-pool2:2.11.0'
 
     //RCaller
-    implementation group: 'com.github.jbytecode', name: 'RCaller', version: '3.0.2'
+    implementation group: 'com.github.jbytecode', name: 'RCaller', version: '4.0.0'
 }

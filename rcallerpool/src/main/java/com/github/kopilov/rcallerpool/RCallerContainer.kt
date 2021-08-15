@@ -4,13 +4,16 @@ import com.github.rcaller.rstuff.RCaller
 import com.github.rcaller.rstuff.RCode
 import java.lang.System.currentTimeMillis
 import java.util.*
+import java.util.concurrent.atomic.AtomicBoolean
 
-class RCallerContainer() {
+class RCallerContainer(private val globalDependencies: RDependencies) {
+
+    constructor() : this(RDependencies())
 
     private val rcaller = RCaller.create()
     private val rcode = RCode.create()
     private val template = rcode.toString();
-    private var hasZombieCalculation = false
+    private val hasZombieCalculation = AtomicBoolean(false)
 
     init {
         rcaller.rCode = rcode
@@ -19,11 +22,7 @@ class RCallerContainer() {
     fun obtain() {
         rcode.addRCode("rm(list=ls())")
         rcode.addRCode(template)
-        rcode.addRCode("require(\"forecast\")")
-        rcode.addRCode("require(\"forecTheta\")")
-        rcode.addRCode("require(\"tsoutliers\")")
-        rcode.addRCode("require(\"prophet\")")
-        rcode.addRCode("require(\"MAPA\")")
+        rcode.addRCode(globalDependencies.generateLoadingScript())
     }
 
     fun release() {
@@ -32,10 +31,15 @@ class RCallerContainer() {
     }
 
     fun hasNoZombieCalculation(): Boolean {
-        return !hasZombieCalculation
+        return !hasZombieCalculation.get()
     }
 
     fun runAndReturnResultOnline(source: String, resultName: String, timeout: Int?): Boolean {
+        return runAndReturnResultOnline(source, resultName, RDependencies(), timeout)
+    }
+
+    fun runAndReturnResultOnline(source: String, resultName: String, dependencies: RDependencies, timeout: Int?): Boolean {
+        rcode.addRCode(dependencies.generateLoadingScript())
         rcode.addRCode(source)
         if (timeout is Int) {
             //start calculation in separate thread
@@ -49,7 +53,7 @@ class RCallerContainer() {
             if (rCallerCalculation.isAlive) {
                 //calculation still performs => timeout expired
                 //Invalidate this RCallerContainer
-                hasZombieCalculation = true
+                hasZombieCalculation.set(true)
                 //Kill process after return
                 Thread ({rcaller.stopRCallerAsync()}).start()
                 return false
@@ -61,6 +65,10 @@ class RCallerContainer() {
             rcaller.runAndReturnResultOnline(resultName)
             return true
         }
+    }
+
+    fun getDoubleMatrixResult(resultName: String): Array<out DoubleArray>? {
+        return rcaller.parser.getAsDoubleMatrix(resultName)
     }
 
     fun getDoubleArrayResult(resultName: String): DoubleArray? {

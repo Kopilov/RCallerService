@@ -1,13 +1,15 @@
 package com.github.kopilov.rcallerpool
 
-import com.github.kopilov.rcallerpool.RCallerContainer
 import org.apache.commons.pool2.PooledObject
 import org.apache.commons.pool2.PooledObjectFactory
 import org.apache.commons.pool2.impl.DefaultPooledObject
 
-class RCallerFactory: PooledObjectFactory<RCallerContainer> {
+class RCallerFactory(val dependencies: RDependencies): PooledObjectFactory<RCallerContainer> {
+
+    constructor(): this(RDependencies())
+
     override fun makeObject(): PooledObject<RCallerContainer> {
-        return DefaultPooledObject(RCallerContainer())
+        return DefaultPooledObject(RCallerContainer(dependencies))
     }
 
     override fun destroyObject(p: PooledObject<RCallerContainer>) {
