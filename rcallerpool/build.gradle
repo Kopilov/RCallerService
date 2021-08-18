@@ -12,3 +12,7 @@ dependencies {
     //RCaller
     implementation group: 'com.github.jbytecode', name: 'RCaller', version: '4.0.0'
 }
+java {
+    withSourcesJar()
+    withJavadocJar()
+}

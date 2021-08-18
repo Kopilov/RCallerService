@@ -34,16 +34,16 @@ class RCallerContainer(private val globalDependencies: RDependencies) {
         return !hasZombieCalculation.get()
     }
 
-    fun runAndReturnResultOnline(source: String, resultName: String, timeout: Int?): Boolean {
-        return runAndReturnResultOnline(source, resultName, RDependencies(), timeout)
+    fun runAndReturnResultOnline(source: String, resultName: String, timeout: Int?, addTryCatch: Boolean = false): Boolean {
+        return runAndReturnResultOnline(source, resultName, RDependencies(), timeout, addTryCatch)
     }
 
-    fun runAndReturnResultOnline(source: String, resultName: String, dependencies: RDependencies, timeout: Int?): Boolean {
+    fun runAndReturnResultOnline(source: String, resultName: String, dependencies: RDependencies, timeout: Int?, addTryCatch: Boolean = false): Boolean {
         rcode.addRCode(dependencies.generateLoadingScript())
         rcode.addRCode(source)
         if (timeout is Int) {
             //start calculation in separate thread
-            val rCallerCalculation = Thread {rcaller.runAndReturnResultOnline(resultName)}
+            val rCallerCalculation = Thread {rcaller.runAndReturnResultOnline(resultName, addTryCatch)}
             rCallerCalculation.start()
             val startedAt = currentTimeMillis();
             //sleep while timeout not expired and calculation actually performs
@@ -62,7 +62,7 @@ class RCallerContainer(private val globalDependencies: RDependencies) {
                 return true
             }
         } else {
-            rcaller.runAndReturnResultOnline(resultName)
+            rcaller.runAndReturnResultOnline(resultName, addTryCatch)
             return true
         }
     }

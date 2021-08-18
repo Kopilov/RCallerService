@@ -7,7 +7,7 @@ import java.time.Duration
 fun createRCallerPool(expirationTime: Long, dependencies: RDependencies): GenericObjectPool<RCallerContainer> {
     val poolConfig = GenericObjectPoolConfig<RCallerContainer>()
     poolConfig.timeBetweenEvictionRuns = Duration.ofSeconds(expirationTime)
-    poolConfig.softMinEvictableIdleTime = Duration.ofSeconds(expirationTime)
+    poolConfig.minEvictableIdleTime = Duration.ofSeconds(expirationTime)
     poolConfig.testOnBorrow = true
     poolConfig.testOnCreate = true
     poolConfig.testOnReturn = true
