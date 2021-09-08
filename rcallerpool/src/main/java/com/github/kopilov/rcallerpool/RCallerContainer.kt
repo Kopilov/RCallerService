@@ -1,37 +1,56 @@
 package com.github.kopilov.rcallerpool
 
+import com.github.rcaller.rstuff.FailurePolicy
 import com.github.rcaller.rstuff.RCaller
-import com.github.rcaller.rstuff.RCode
+import com.github.rcaller.rstuff.RCallerOptions
 import java.lang.System.currentTimeMillis
-import java.util.*
+import java.util.Date
+import java.util.StringJoiner
 import java.util.concurrent.atomic.AtomicBoolean
 
-class RCallerContainer(private val globalDependencies: RDependencies) {
+class RCallerContainer {
 
-    constructor() : this(RDependencies())
+    private fun createRCallerOptions(): RCallerOptions? {
+        val rCallerOptions = RCallerOptions.create()
+        rCallerOptions.failurePolicy = FailurePolicy.CONTINUE
+        rCallerOptions.setFailIfArrowNotAvailable(true)
+        return rCallerOptions
+    }
 
-    private val rcaller = RCaller.create()
-    private val rcode = RCode.create()
-    private val template = rcode.toString();
+    private val rcaller = RCaller.create(createRCallerOptions())
+    private val rcode = rcaller.rCode
     private val hasZombieCalculation = AtomicBoolean(false)
+    private val hasFailedCalculation = AtomicBoolean(false)
 
-    init {
-        rcaller.rCode = rcode
+    private val systemDependenciesListName: String?
+
+    constructor(): this(RDependencies()) {}
+
+    constructor(dependencies: RDependencies) {
+        //Run plug code snippet to init the RCaller, send toplevel dependencies to REPL and read list of system objects
+        //that should not be removed on pooling (second reading adds a new variable itself :-) )
+        systemDependenciesListName = "system_dependencies_${Date().time}"
+        val startScript = """
+            ${dependencies.generateLoadingScript()}
+            $systemDependenciesListName <- ls()
+            $systemDependenciesListName <- ls()
+            """.trimIndent()
+        runAndReturnResultOnline(startScript, systemDependenciesListName, null)
+        getStringArrayResult(systemDependenciesListName)
+        rcode.clearOnline()
     }
 
     fun obtain() {
-        rcode.addRCode("rm(list=ls())")
-        rcode.addRCode(template)
-        rcode.addRCode(globalDependencies.generateLoadingScript())
+        rcode.addRCode("rm(list = setdiff(ls(), $systemDependenciesListName))")
     }
 
     fun release() {
-        rcode.clear()
+        rcode.clearOnline()
         rcaller.deleteTempFiles()
     }
 
-    fun hasNoZombieCalculation(): Boolean {
-        return !hasZombieCalculation.get()
+    fun isValid(): Boolean {
+        return !hasZombieCalculation.get() && !hasFailedCalculation.get()
     }
 
     fun runAndReturnResultOnline(source: String, resultName: String, timeout: Int?, addTryCatch: Boolean = false): Boolean {
@@ -41,9 +60,17 @@ class RCallerContainer(private val globalDependencies: RDependencies) {
     fun runAndReturnResultOnline(source: String, resultName: String, dependencies: RDependencies, timeout: Int?, addTryCatch: Boolean = false): Boolean {
         rcode.addRCode(dependencies.generateLoadingScript())
         rcode.addRCode(source)
+        val tryRunRCaller = {
+            try {
+                rcaller.runAndReturnResultOnline(resultName, addTryCatch)
+            } catch (e: Exception) {
+                hasFailedCalculation.set(true)
+                throw e
+            }
+        }
         if (timeout is Int) {
             //start calculation in separate thread
-            val rCallerCalculation = Thread {rcaller.runAndReturnResultOnline(resultName, addTryCatch)}
+            val rCallerCalculation = Thread(tryRunRCaller)
             rCallerCalculation.start()
             val startedAt = currentTimeMillis();
             //sleep while timeout not expired and calculation actually performs
@@ -59,10 +86,10 @@ class RCallerContainer(private val globalDependencies: RDependencies) {
                 return false
             } else {
                 //OK
-                return true
+                return !hasFailedCalculation.get()
             }
         } else {
-            rcaller.runAndReturnResultOnline(resultName, addTryCatch)
+            tryRunRCaller()
             return true
         }
     }
@@ -86,7 +113,7 @@ class RCallerContainer(private val globalDependencies: RDependencies) {
     }
 
     fun close() {
-        if (hasNoZombieCalculation()) {
+        if (isValid()) {
             rcaller.stopStreamConsumers()
             rcaller.stopRCallerOnline()
         }

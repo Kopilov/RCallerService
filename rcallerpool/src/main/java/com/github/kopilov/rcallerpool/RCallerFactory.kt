@@ -17,7 +17,7 @@ class RCallerFactory(val dependencies: RDependencies): PooledObjectFactory<RCall
     }
 
     override fun validateObject(p: PooledObject<RCallerContainer>?): Boolean {
-        return p != null && p.`object` != null && p.`object`.hasNoZombieCalculation()
+        return p != null && p.`object` != null && p.`object`.isValid()
     }
 
     override fun activateObject(p: PooledObject<RCallerContainer>) {
