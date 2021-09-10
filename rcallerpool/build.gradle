@@ -16,3 +16,22 @@ java {
     withSourcesJar()
     withJavadocJar()
 }
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            name = "OSS_Nexus"
+            credentials {
+                username = ""
+                password = ""
+            }
+            allowInsecureProtocol = true
+            url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+        }
+    }
+}

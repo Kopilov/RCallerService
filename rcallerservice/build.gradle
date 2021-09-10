@@ -3,7 +3,11 @@ plugins {
     id 'application'
 }
 
-def jerseyVersion = '2.31'
+def jerseyVersion = '3.0.2'
+
+configurations {
+    uberjar
+}
 
 dependencies {
     implementation project(":rcallerpool")
@@ -24,16 +28,38 @@ dependencies {
     implementation group: 'org.glassfish.jersey.containers', name: 'jersey-container-servlet', version: "$jerseyVersion"
     implementation group: 'org.glassfish.jersey.media', name: 'jersey-media-json-jackson', version: "$jerseyVersion"
     implementation group: 'org.glassfish.jersey.inject', name: 'jersey-hk2', version: "$jerseyVersion"
+
+    uberjar project(":rcallerpool")
+    //Kotlin
+    uberjar "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+
+    //Commons CLI
+    uberjar group: 'commons-cli', name: 'commons-cli', version: '1.4'
+
+    //Java EE API
+    uberjar group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
+    uberjar group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
+    uberjar group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.1.1'
+    uberjar group: 'javax.json.bind', name: 'javax.json.bind-api', version: '1.0'
+
+    //JaxRS implementation
+    uberjar group: 'org.glassfish.jersey.containers', name: 'jersey-container-grizzly2-http', version: "$jerseyVersion"
+    uberjar group: 'org.glassfish.jersey.containers', name: 'jersey-container-servlet', version: "$jerseyVersion"
+    uberjar group: 'org.glassfish.jersey.media', name: 'jersey-media-json-jackson', version: "$jerseyVersion"
+    uberjar group: 'org.glassfish.jersey.inject', name: 'jersey-hk2', version: "$jerseyVersion"
 }
 
 mainClassName = "com.github.kopilov.rcallerservice.MainKt"
 
-//jar {
-//    manifest {
-//        attributes "Main-Class": "$mainClassName"
-//    }
-//
-//    from {
-//        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-//    }
-//}
+jar {
+    manifest {
+        attributes "Main-Class": "$mainClassName"
+    }
+
+    from {
+        configurations.uberjar.collect { it.isDirectory() ? it : zipTree(it) }
+    } {
+        duplicatesStrategy = 'WARN'
+        exclude 'META-INF/*.txt', 'META-INF/*.md', 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/versions/*/module-info.class', 'META-INF/LICENSE', 'META-INF/NOTICE'
+    }
+}
