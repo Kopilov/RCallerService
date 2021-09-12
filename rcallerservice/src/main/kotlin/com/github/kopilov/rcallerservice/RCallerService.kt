@@ -1,8 +1,6 @@
 package com.github.kopilov.rcallerservice
 
-import org.glassfish.jersey.server.ContainerRequest
-import com.github.kopilov.rcallerpool.RCallerContainer
-import com.github.kopilov.rcallerpool.createRCallerPool
+import javax.inject.Inject
 import java.util.StringJoiner
 import javax.ws.rs.Path
 import javax.ws.rs.POST
@@ -13,14 +11,14 @@ import javax.ws.rs.Produces
 import javax.ws.rs.QueryParam
 import javax.ws.rs.core.Response
 import kotlin.system.exitProcess
+import org.glassfish.jersey.server.ContainerRequest
+import org.apache.commons.pool2.impl.GenericObjectPool
+import com.github.kopilov.rcallerpool.RCallerContainer
 
 @Path("")
 class RCallerService {
 
-    companion object {
-        val expirationTime = 60 //Time in seconds from last resource usage to it's removing
-        val rCallerPool = createRCallerPool(expirationTime)
-    }
+    @Inject var rCallerPool: GenericObjectPool<RCallerContainer>? = null
 
     /**
      * Calculate R script with double array output written in [resultNameParam] variable.
@@ -33,13 +31,14 @@ class RCallerService {
     fun calculateDoubleArray(
         script: String,
         @QueryParam("result") resultNameParam: String?,
-        @QueryParam("timeout") timeout: Int?
+        @QueryParam("timeout") timeout: Int?,
+        @QueryParam("catch") catch: Boolean?
     ): Response {
         var rCallerContainer: RCallerContainer? = null
         try {
-            rCallerContainer = rCallerPool.borrowObject()
+            rCallerContainer = rCallerPool!!.borrowObject()
             val resultName = resultNameParam ?: "result"
-            val resultReady = rCallerContainer.runAndReturnResultOnline(script, resultName, timeout)
+            val resultReady = rCallerContainer.runAndReturnResultOnline(script, resultName, timeout, catch ?: false)
             return if (resultReady) {
                 val doubleArrayResult: DoubleArray = rCallerContainer.getDoubleArrayResult(resultName)!!
                 val stringArrayResult = doubleArrayResult.map { d: Double -> "$d" }
@@ -52,7 +51,7 @@ class RCallerService {
             return Response.status(Response.Status.fromStatusCode(500)).entity(e.message).build()
         } finally {
             if (rCallerContainer != null) {
-                rCallerPool.returnObject(rCallerContainer)
+                rCallerPool!!.returnObject(rCallerContainer)
             }
         }
     }
@@ -68,13 +67,14 @@ class RCallerService {
     fun calculateTextArray(
         script: String,
         @QueryParam("result") resultNameParam: String?,
-        @QueryParam("timeout") timeout: Int?
+        @QueryParam("timeout") timeout: Int?,
+        @QueryParam("catch") catch: Boolean?
     ): Response {
         var rCallerContainer: RCallerContainer? = null
         try {
-            rCallerContainer = rCallerPool.borrowObject()
+            rCallerContainer = rCallerPool!!.borrowObject()
             val resultName = resultNameParam ?: "result"
-            val resultReady = rCallerContainer.runAndReturnResultOnline(script, resultName, timeout)
+            val resultReady = rCallerContainer.runAndReturnResultOnline(script, resultName, timeout, catch ?: false)
             return if (resultReady) {
                 val stringArrayResult = rCallerContainer.getStringArrayResult(resultName)
                 val result = StringJoiner(";")
@@ -95,7 +95,7 @@ class RCallerService {
             return Response.status(Response.Status.fromStatusCode(500)).entity(e.message).build()
         } finally {
             if (rCallerContainer != null) {
-                rCallerPool.returnObject(rCallerContainer)
+                rCallerPool!!.returnObject(rCallerContainer)
             }
         }
     }
@@ -111,13 +111,14 @@ class RCallerService {
     fun calculatePlainText(
         script: String,
         @QueryParam("result") resultNameParam: String?,
-        @QueryParam("timeout") timeout: Int?
+        @QueryParam("timeout") timeout: Int?,
+        @QueryParam("catch") catch: Boolean?
     ): Response {
         var rCallerContainer: RCallerContainer? = null
         try {
-            rCallerContainer = rCallerPool.borrowObject()
+            rCallerContainer = rCallerPool!!.borrowObject()
             val resultName = resultNameParam ?: "result"
-            val resultReady = rCallerContainer.runAndReturnResultOnline(script, resultName, timeout)
+            val resultReady = rCallerContainer.runAndReturnResultOnline(script, resultName, timeout, catch ?: false)
             return if (resultReady) {
                 val stringResult = rCallerContainer.getStringResult(resultName)
                 Response.ok().entity(stringResult).build()
@@ -129,7 +130,7 @@ class RCallerService {
             return Response.status(Response.Status.fromStatusCode(500)).entity(e.message).build()
         } finally {
             if (rCallerContainer != null) {
-                rCallerPool.returnObject(rCallerContainer)
+                rCallerPool!!.returnObject(rCallerContainer)
             }
         }
     }
