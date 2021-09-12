@@ -38,19 +38,17 @@ fun configurePool(commandLine: CommandLine): GenericObjectPool<RCallerContainer>
 }
 
 class App(private val commandLine: CommandLine) {
+    companion object {
+        var rCallerPool: GenericObjectPool<RCallerContainer>? = null;
+    }
+
     fun run() {
         try {
             val port = commandLine.getOptionValue("port", "8080")
             val BASE_URI = URI.create("http://0.0.0.0:${port}/")
-            val rCallerPool = configurePool(commandLine)
+            rCallerPool = configurePool(commandLine)
 
             val applicationConfig = ApplicationConfig()
-            //Pass configured pool to JAX RS endpoints
-            applicationConfig.register(object: AbstractBinder() {
-                override fun configure() {
-                    bind(rCallerPool).to(GenericObjectPool::class.java)
-                }
-            })
             val server = GrizzlyHttpServerFactory.createHttpServer(BASE_URI, applicationConfig, false)
             Runtime.getRuntime().addShutdownHook(Thread(Runnable { server.shutdownNow() }))
             server.start()

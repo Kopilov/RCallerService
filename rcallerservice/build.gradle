@@ -3,7 +3,7 @@ plugins {
     id 'application'
 }
 
-def jerseyVersion = '3.0.2'
+def jerseyVersion = '2.35'
 
 configurations {
     uberjar
@@ -19,7 +19,6 @@ dependencies {
 
     //Java EE API
     implementation group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
-    implementation group: 'javax.inject', name: 'javax.inject', version: '1'
     implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
     implementation group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.1.1'
     implementation group: 'javax.json.bind', name: 'javax.json.bind-api', version: '1.0'
