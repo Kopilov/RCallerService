@@ -12,8 +12,7 @@ class RCallerContainer {
 
     private fun createRCallerOptions(): RCallerOptions? {
         val rCallerOptions = RCallerOptions.create()
-        rCallerOptions.failurePolicy = FailurePolicy.CONTINUE
-        rCallerOptions.setFailIfArrowNotAvailable(true)
+        rCallerOptions.failurePolicy = FailurePolicy.CONTINUE //actually, this enables "do not retry" behavior, not "ignore errors"
         return rCallerOptions
     }
 

@@ -17,6 +17,10 @@ dependencies {
     //Commons CLI
     implementation group: 'commons-cli', name: 'commons-cli', version: '1.4'
 
+    //Apache Arrow
+    implementation 'org.apache.arrow:arrow-vector:5.0.0'
+    implementation 'org.apache.arrow:arrow-memory-netty:5.0.0'
+
     //Java EE API
     implementation group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
     implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
@@ -35,6 +39,10 @@ dependencies {
 
     //Commons CLI
     uberjar group: 'commons-cli', name: 'commons-cli', version: '1.4'
+
+    //Apache Arrow
+    uberjar 'org.apache.arrow:arrow-vector:5.0.0'
+    uberjar 'org.apache.arrow:arrow-memory-netty:5.0.0'
 
     //Java EE API
     uberjar group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
