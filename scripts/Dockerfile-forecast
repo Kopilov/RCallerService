@@ -1,16 +1,17 @@
-ARG DOCKER_IMAGE=kopilov/rcallerservice:1.0.1
+ARG IMAGE_VERSION
+ARG DOCKER_IMAGE=kopilov/rcallerservice:$IMAGE_VERSION
 FROM $DOCKER_IMAGE
 
 # Install necessary R modules from APT
-RUN apt-get install -yq r-base-dev r-cran-curl r-cran-devtools r-cran-forecast
+RUN apt-get install -yq r-cran-forecast
 
 # Install necessary R modules from CRAN
-RUN echo 'install.packages("forecTheta", repos="http://cran.r-project.org")' | R --no-save
-RUN echo 'install.packages("tsoutliers", repos="http://cran.r-project.org")' | R --no-save
-RUN echo 'install.packages("MAPA", repos="http://cran.r-project.org")' | R --no-save
-RUN echo 'install.packages("prophet", repos="http://cran.r-project.org")' | R --no-save
+#RUN echo 'install.packages("forecTheta", repos="http://cran.r-project.org")' | R --no-save
+#RUN echo 'install.packages("tsoutliers", repos="http://cran.r-project.org")' | R --no-save
+#RUN echo 'install.packages("MAPA", repos="http://cran.r-project.org")' | R --no-save
+#RUN echo 'install.packages("prophet", repos="http://cran.r-project.org")' | R --no-save
 
 EXPOSE 8080
 
 WORKDIR /tmp
-CMD /tmp/rcallerservice.sh
+CMD ["/tmp/rcallerservice.sh", "--enable_library=forecast"]

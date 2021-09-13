@@ -1,11 +1,15 @@
-ARG DOCKER_IMAGE=kopilov/rcallerservice:base-1.0.1
+ARG IMAGE_VERSION
+ARG DOCKER_IMAGE=kopilov/rcallerservice:base-$IMAGE_VERSION
 FROM $DOCKER_IMAGE
+ARG IMAGE_VERSION
+
+RUN apt-get install -yq openjdk-11-jdk-headless
 
 COPY .  /
-RUN ./gradlew build && find build -name "rcallerservice*jar" -exec cp {} /tmp/rcallerservice.jar \; && cp /scripts/rcallerservice.sh /tmp
+RUN ./gradlew build && cp "rcallerservice/build/libs/rcallerservice-${IMAGE_VERSION}.jar" /tmp/rcallerservice.jar && cp /scripts/rcallerservice.sh /tmp
 
 # Install necessary R modules from APT
-#RUN apt-get install -yq r-base-dev r-cran-curl r-cran-devtools r-cran-forecast
+#RUN apt-get install -yq r-cran-forecast
 
 # Install necessary R modules from CRAN
 #RUN echo 'install.packages("forecTheta", repos="http://cran.r-project.org")' | R --no-save

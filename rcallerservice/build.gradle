@@ -71,3 +71,27 @@ jar {
         exclude 'META-INF/*.txt', 'META-INF/*.md', 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/versions/*/module-info.class', 'META-INF/LICENSE', 'META-INF/NOTICE'
     }
 }
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            name = "OSS_Nexus"
+            credentials {
+                username = ""
+                password = ""
+            }
+            allowInsecureProtocol = true
+            url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+        }
+    }
+}
