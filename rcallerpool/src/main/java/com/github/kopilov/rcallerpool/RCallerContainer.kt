@@ -3,7 +3,11 @@ package com.github.kopilov.rcallerpool
 import com.github.rcaller.rstuff.FailurePolicy
 import com.github.rcaller.rstuff.RCaller
 import com.github.rcaller.rstuff.RCallerOptions
+import java.io.File
 import java.lang.System.currentTimeMillis
+import java.nio.ByteBuffer
+import java.nio.channels.FileChannel
+import java.nio.file.StandardOpenOption
 import java.util.Date
 import java.util.StringJoiner
 import java.util.concurrent.atomic.AtomicBoolean
@@ -52,24 +56,10 @@ class RCallerContainer {
         return !hasZombieCalculation.get() && !hasFailedCalculation.get()
     }
 
-    fun runAndReturnResultOnline(source: String, resultName: String, timeout: Int?, addTryCatch: Boolean = false): Boolean {
-        return runAndReturnResultOnline(source, resultName, RDependencies(), timeout, addTryCatch)
-    }
-
-    fun runAndReturnResultOnline(source: String, resultName: String, dependencies: RDependencies, timeout: Int?, addTryCatch: Boolean = false): Boolean {
-        rcode.addRCode(dependencies.generateLoadingScript())
-        rcode.addRCode(source)
-        val tryRunRCaller = {
-            try {
-                rcaller.runAndReturnResultOnline(resultName, addTryCatch)
-            } catch (e: Exception) {
-                hasFailedCalculation.set(true)
-                throw e
-            }
-        }
+    private fun runOperationWithTimeout(operation: ()->Unit, timeout: Int?): Boolean {
         if (timeout is Int) {
             //start calculation in separate thread
-            val rCallerCalculation = Thread(tryRunRCaller)
+            val rCallerCalculation = Thread(operation)
             rCallerCalculation.start()
             val startedAt = currentTimeMillis();
             //sleep while timeout not expired and calculation actually performs
@@ -88,9 +78,51 @@ class RCallerContainer {
                 return !hasFailedCalculation.get()
             }
         } else {
-            tryRunRCaller()
+            operation()
             return true
         }
+    }
+
+    fun runAndReturnResult(source: String, resultName: String, timeout: Int?, addTryCatch: Boolean = false): Boolean {
+        return runAndReturnResult(source, resultName, RDependencies(), timeout, addTryCatch)
+    }
+
+    fun runAndReturnResult(source: String, resultName: String, dependencies: RDependencies, timeout: Int?, addTryCatch: Boolean = false): Boolean {
+        val saveScript = File.createTempFile("source", "R")
+        val fileChannel = FileChannel.open(saveScript.toPath(), StandardOpenOption.WRITE)
+        val tryRunRCaller = {
+            try {
+                val dependenciesLoading = dependencies.generateLoadingScript()
+                fileChannel.write(ByteBuffer.wrap("$dependenciesLoading\n$source".toByteArray()))
+                rcode.addRCode("source(${saveScript.absolutePath})")
+                rcaller.runAndReturnResultOnline(resultName, addTryCatch)
+            } catch (e: Exception) {
+                hasFailedCalculation.set(true)
+                throw e
+            } finally {
+                fileChannel.close()
+                saveScript.delete()
+            }
+        }
+        return runOperationWithTimeout(tryRunRCaller, timeout)
+    }
+
+    fun runAndReturnResultOnline(source: String, resultName: String, timeout: Int?, addTryCatch: Boolean = false): Boolean {
+        return runAndReturnResultOnline(source, resultName, RDependencies(), timeout, addTryCatch)
+    }
+
+    fun runAndReturnResultOnline(source: String, resultName: String, dependencies: RDependencies, timeout: Int?, addTryCatch: Boolean = false): Boolean {
+        val tryRunRCaller = {
+            try {
+                rcode.addRCode(dependencies.generateLoadingScript())
+                rcode.addRCode(source)
+                rcaller.runAndReturnResultOnline(resultName, addTryCatch)
+            } catch (e: Exception) {
+                hasFailedCalculation.set(true)
+                throw e
+            }
+        }
+        return runOperationWithTimeout(tryRunRCaller, timeout)
     }
 
     fun getDoubleMatrixResult(resultName: String): Array<out DoubleArray>? {

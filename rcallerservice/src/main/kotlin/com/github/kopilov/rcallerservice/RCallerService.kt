@@ -33,13 +33,18 @@ class RCallerService {
         script: String,
         @QueryParam("result") resultNameParam: String?,
         @QueryParam("timeout") timeout: Int?,
-        @QueryParam("catch") catch: Boolean?
+        @QueryParam("catch") catch: Boolean?,
+        @QueryParam("by_file") byFile: Boolean?
     ): Response {
         var rCallerContainer: RCallerContainer? = null
         try {
             rCallerContainer = rCallerPool.borrowObject()
             val resultName = resultNameParam ?: "result"
-            val resultReady = rCallerContainer.runAndReturnResultOnline(script, resultName, timeout, catch ?: false)
+            val resultReady = if (byFile == true) {
+                rCallerContainer.runAndReturnResult(script, resultName, timeout, catch ?: false)
+            } else {
+                rCallerContainer.runAndReturnResultOnline(script, resultName, timeout, catch ?: false)
+            }
             return if (resultReady) {
                 val doubleArrayResult: DoubleArray = rCallerContainer.getDoubleArrayResult(resultName)!!
                 val stringArrayResult = doubleArrayResult.map { d: Double -> "$d" }
@@ -69,13 +74,18 @@ class RCallerService {
         script: String,
         @QueryParam("result") resultNameParam: String?,
         @QueryParam("timeout") timeout: Int?,
-        @QueryParam("catch") catch: Boolean?
+        @QueryParam("catch") catch: Boolean?,
+        @QueryParam("by_file") byFile: Boolean?
     ): Response {
         var rCallerContainer: RCallerContainer? = null
         try {
             rCallerContainer = rCallerPool.borrowObject()
             val resultName = resultNameParam ?: "result"
-            val resultReady = rCallerContainer.runAndReturnResultOnline(script, resultName, timeout, catch ?: false)
+            val resultReady = if (byFile == true) {
+                rCallerContainer.runAndReturnResult(script, resultName, timeout, catch ?: false)
+            } else {
+                rCallerContainer.runAndReturnResultOnline(script, resultName, timeout, catch ?: false)
+            }
             return if (resultReady) {
                 val stringArrayResult = rCallerContainer.getStringArrayResult(resultName)
                 val result = StringJoiner(";")
@@ -113,13 +123,18 @@ class RCallerService {
         script: String,
         @QueryParam("result") resultNameParam: String?,
         @QueryParam("timeout") timeout: Int?,
-        @QueryParam("catch") catch: Boolean?
+        @QueryParam("catch") catch: Boolean?,
+        @QueryParam("by_file") byFile: Boolean?
     ): Response {
         var rCallerContainer: RCallerContainer? = null
         try {
             rCallerContainer = rCallerPool.borrowObject()
             val resultName = resultNameParam ?: "result"
-            val resultReady = rCallerContainer.runAndReturnResultOnline(script, resultName, timeout, catch ?: false)
+            val resultReady = if (byFile == true) {
+                rCallerContainer.runAndReturnResult(script, resultName, timeout, catch ?: false)
+            } else {
+                rCallerContainer.runAndReturnResultOnline(script, resultName, timeout, catch ?: false)
+            }
             return if (resultReady) {
                 val stringResult = rCallerContainer.getStringResult(resultName)
                 Response.ok().entity(stringResult).build()
