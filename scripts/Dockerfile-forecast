@@ -6,12 +6,12 @@ FROM $DOCKER_IMAGE
 RUN apt-get install -yq r-cran-forecast
 
 # Install necessary R modules from CRAN
-#RUN echo 'install.packages("forecTheta", repos="http://cran.r-project.org")' | R --no-save
-#RUN echo 'install.packages("tsoutliers", repos="http://cran.r-project.org")' | R --no-save
+RUN echo 'install.packages("forecTheta", repos="http://cran.r-project.org")' | R --no-save
+RUN echo 'install.packages("tsoutliers", repos="http://cran.r-project.org")' | R --no-save
 #RUN echo 'install.packages("MAPA", repos="http://cran.r-project.org")' | R --no-save
 #RUN echo 'install.packages("prophet", repos="http://cran.r-project.org")' | R --no-save
 
 EXPOSE 8080
 
 WORKDIR /tmp
-CMD ["/tmp/rcallerservice.sh", "--enable_library=forecast"]
+CMD ["/tmp/rcallerservice.sh","--enable_library=forecast","--enable_library=forecTheta","--enable_library=tsoutliers"]
