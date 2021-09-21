@@ -94,7 +94,7 @@ class RCallerContainer {
             try {
                 val dependenciesLoading = dependencies.generateLoadingScript()
                 fileChannel.write(ByteBuffer.wrap("$dependenciesLoading\n$source".toByteArray()))
-                rcode.addRCode("source(${saveScript.absolutePath})")
+                rcode.addRCode("source(\"${saveScript.absolutePath}\")")
                 rcaller.runAndReturnResultOnline(resultName, addTryCatch)
             } catch (e: Exception) {
                 hasFailedCalculation.set(true)
