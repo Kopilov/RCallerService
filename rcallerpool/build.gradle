@@ -1,7 +1,3 @@
-plugins {
-    id 'maven-publish'
-}
-
 dependencies {
     //Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
@@ -12,26 +8,42 @@ dependencies {
     //RCaller
     implementation group: 'com.github.jbytecode', name: 'RCaller', version: '4.0.2'
 }
-java {
-    withSourcesJar()
-    withJavadocJar()
-}
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
-        }
-    }
-    repositories {
-        maven {
-            name = "OSS_Nexus"
-            credentials {
-                username = ""
-                password = ""
+            pom {
+                name = 'RCallerPool'
+                description = 'RCaller wrapped in Apache Commons Pool'
+                url = 'https://github.com/Kopilov/RCallerService'
+                scm {
+                    connection = 'https://github.com/Kopilov/RCallerService.git'
+                    developerConnection = 'git@github.com:Kopilov/RCallerService.git'
+                    url = 'https://github.com/Kopilov/RCallerService'
+                }
+                developers {
+                    developer {
+                        name = 'Kopilov Aleksandr'
+                        email = 'kopilov.ad@gmail.com'
+                    }
+                }
+                licenses {
+                    license {
+                        name = 'GNU LGPL'
+                        url = 'https://www.gnu.org/copyleft/lgpl.html'
+                    }
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
             }
-            allowInsecureProtocol = true
-            url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
         }
     }
+}
+
+signing {
+    useGpgCmd()
+    sign publishing.publications.mavenJava
 }

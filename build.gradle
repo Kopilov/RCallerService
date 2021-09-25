@@ -12,6 +12,8 @@ subprojects {
 
     apply plugin: 'org.jetbrains.kotlin.jvm'
     apply plugin: 'java'
+    apply plugin: 'signing'
+    apply plugin: 'maven-publish'
 
     repositories {
         mavenCentral()
@@ -29,5 +31,24 @@ subprojects {
     }
     compileTestKotlin {
         kotlinOptions.jvmTarget = "11"
+    }
+
+    java {
+        withSourcesJar()
+        withJavadocJar()
+    }
+
+    publishing {
+        repositories {
+            maven {
+                name = "OSS_Nexus"
+                credentials {
+                    username = "Kopilov"
+                    password = ""
+                }
+                allowInsecureProtocol = true
+                url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+            }
+        }
     }
 }

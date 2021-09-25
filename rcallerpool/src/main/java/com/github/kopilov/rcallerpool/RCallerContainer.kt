@@ -13,6 +13,9 @@ import java.util.Date
 import java.util.StringJoiner
 import java.util.concurrent.atomic.AtomicBoolean
 
+/**
+ * [RCaller] object wrapper for interacting with Apache Commons Pool and IO managing
+ */
 class RCallerContainer {
 
     private fun createRCallerOptions(): RCallerOptions? {
@@ -28,8 +31,14 @@ class RCallerContainer {
 
     private val systemDependenciesListName: String?
 
+    /**
+     * Create new object with underlying RCaller
+     */
     constructor(): this(RDependencies()) {}
 
+    /**
+     * Create new object with underlying RCaller. All [dependencies] elements would be loaded to R REPL on start (only once)
+     */
     constructor(dependencies: RDependencies) {
         //Run plug code snippet to init the RCaller, send toplevel dependencies to REPL and read list of system objects
         //that should not be removed on pooling (second reading adds a new variable itself :-) )
@@ -44,10 +53,16 @@ class RCallerContainer {
         rcode.clearOnline()
     }
 
+    /**
+     * Internal usage. This is invoked by [RCallerFactory] on taking object from the pool
+     */
     fun obtain() {
         rcode.addRCode("rm(list = setdiff(ls(), $systemDependenciesListName))")
     }
 
+    /**
+     * Internal usage. This is invoked by [RCallerFactory] on putting object to the pool
+     */
     fun release() {
         rcode.clearOnline()
         rcaller.deleteTempFiles()
@@ -84,10 +99,20 @@ class RCallerContainer {
         }
     }
 
+    /**
+     * Run [source] script by saving it to separate file, save [resultName] variable. If [timeout] is not null and script is not executed in given time
+     * (in seconds), throw an exception. If [addTryCatch] is true, add tryCatch function to R code.
+     * @see runAndReturnResultOnline
+     */
     fun runAndReturnResult(source: String, resultName: String, timeout: Int?, addTryCatch: Boolean = false): Boolean {
         return runAndReturnResult(source, resultName, RDependencies(), timeout, addTryCatch)
     }
 
+    /**
+     * Run [source] script together with [dependencies] content by saving it to separate file, save [resultName] variable. If [timeout] is not null and script is not executed in given time
+     * (in seconds), throw an exception. If [addTryCatch] is true, add tryCatch function to R code.
+     * @see runAndReturnResultOnline
+     */
     fun runAndReturnResult(source: String, resultName: String, dependencies: RDependencies, timeout: Int?, addTryCatch: Boolean = false): Boolean {
         val saveScript = File.createTempFile("source", "R")
         val fileChannel = FileChannel.open(saveScript.toPath(), StandardOpenOption.WRITE)
@@ -113,10 +138,20 @@ class RCallerContainer {
         return runOperationWithTimeout(tryRunRCaller, timeout)
     }
 
+    /**
+     * Run [source] script by sending it directly to R stdin, save [resultName] variable. If [timeout] is not null and script is not executed in given time
+     * (in seconds), throw an exception. If [addTryCatch] is true, add tryCatch function to R code.
+     * @see runAndReturnResult
+     */
     fun runAndReturnResultOnline(source: String, resultName: String, timeout: Int?, addTryCatch: Boolean = false): Boolean {
         return runAndReturnResultOnline(source, resultName, RDependencies(), timeout, addTryCatch)
     }
 
+    /**
+     * Run [source] script together with [dependencies] content by sending it directly to R stdin, save [resultName] variable. If [timeout] is not null and script is not executed in given time
+     * (in seconds), throw an exception. If [addTryCatch] is true, add tryCatch function to R code.
+     * @see runAndReturnResult
+     */
     fun runAndReturnResultOnline(source: String, resultName: String, dependencies: RDependencies, timeout: Int?, addTryCatch: Boolean = false): Boolean {
         val tryRunRCaller = {
             try {

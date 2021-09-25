@@ -5,6 +5,10 @@ import org.apache.commons.pool2.PooledObjectFactory
 import org.apache.commons.pool2.impl.DefaultPooledObject
 import java.util.prefs.Preferences
 
+/**
+ * Use this class to init new pool (manually or by [createRCallerPool] method).
+ * All [dependencies] elements would be loaded to R REPL on start (only once)
+ */
 class RCallerFactory(val dependencies: RDependencies): PooledObjectFactory<RCallerContainer> {
 
     constructor(): this(RDependencies())

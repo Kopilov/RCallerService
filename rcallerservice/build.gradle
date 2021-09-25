@@ -1,5 +1,4 @@
 plugins {
-    id 'maven-publish'
     id 'application'
 }
 
@@ -72,26 +71,37 @@ jar {
     }
 }
 
-java {
-    withSourcesJar()
-    withJavadocJar()
-}
-
 publishing {
     publications {
         mavenJava(MavenPublication) {
             from components.java
-        }
-    }
-    repositories {
-        maven {
-            name = "OSS_Nexus"
-            credentials {
-                username = ""
-                password = ""
+            pom {
+                name = 'RCallerService'
+                description = 'HTTP microservice for running R-scripts. Started R processes are stored in RCallerPool between requests.'
+                url = 'https://github.com/Kopilov/RCallerService'
+                scm {
+                    connection = 'https://github.com/Kopilov/RCallerService.git'
+                    developerConnection = 'git@github.com:Kopilov/RCallerService.git'
+                    url = 'https://github.com/Kopilov/RCallerService'
+                }
+                developers {
+                    developer {
+                        name = 'Kopilov Aleksandr'
+                        email = 'kopilov.ad@gmail.com'
+                    }
+                }
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
             }
-            allowInsecureProtocol = true
-            url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
         }
     }
+}
+
+signing {
+    useGpgCmd()
+    sign publishing.publications.mavenJava
 }
