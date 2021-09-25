@@ -3,6 +3,7 @@ package com.github.kopilov.rcallerpool
 import org.apache.commons.pool2.PooledObject
 import org.apache.commons.pool2.PooledObjectFactory
 import org.apache.commons.pool2.impl.DefaultPooledObject
+import java.util.prefs.Preferences
 
 class RCallerFactory(val dependencies: RDependencies): PooledObjectFactory<RCallerContainer> {
 

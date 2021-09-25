@@ -1,5 +1,6 @@
 package com.github.kopilov.rcallerpool
 
+import com.github.rcaller.exception.ExecutionException
 import com.github.rcaller.rstuff.FailurePolicy
 import com.github.rcaller.rstuff.RCaller
 import com.github.rcaller.rstuff.RCallerOptions
@@ -96,6 +97,11 @@ class RCallerContainer {
                 fileChannel.write(ByteBuffer.wrap("$dependenciesLoading\n$source".toByteArray()))
                 rcode.addRCode("source(\"${saveScript.absolutePath}\")")
                 rcaller.runAndReturnResultOnline(resultName, addTryCatch)
+            } catch (e: ExecutionException) {
+                if (e.message?.startsWith("R code throw an error") == false) {
+                    hasFailedCalculation.set(true)
+                }
+                throw e
             } catch (e: Exception) {
                 hasFailedCalculation.set(true)
                 throw e
@@ -117,6 +123,11 @@ class RCallerContainer {
                 rcode.addRCode(dependencies.generateLoadingScript())
                 rcode.addRCode(source)
                 rcaller.runAndReturnResultOnline(resultName, addTryCatch)
+            } catch (e: ExecutionException) {
+                if (e.message?.startsWith("R code throw an error") == false) {
+                    hasFailedCalculation.set(true)
+                }
+                throw e
             } catch (e: Exception) {
                 hasFailedCalculation.set(true)
                 throw e
@@ -147,6 +158,8 @@ class RCallerContainer {
         if (isValid()) {
             rcaller.stopStreamConsumers()
             rcaller.stopRCallerOnline()
+        } else {
+            rcaller.stopRCallerAsync()
         }
         rcaller.deleteTempFiles()
     }
