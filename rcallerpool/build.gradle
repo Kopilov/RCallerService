@@ -6,7 +6,8 @@ dependencies {
     api 'org.apache.commons:commons-pool2:2.11.0'
 
     //RCaller
-    implementation group: 'com.github.jbytecode', name: 'RCaller', version: '4.0.2'
+    //implementation group: 'com.github.jbytecode', name: 'RCaller', version: '4.0.2'
+    implementation group: 'com.github.jbytecode', name: 'RCaller', version: '4.0.3-SNAPSHOT'
 }
 
 publishing {

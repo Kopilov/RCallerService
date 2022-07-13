@@ -4,11 +4,12 @@ plugins {
 }
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 subprojects {
     group 'com.github.kopilov.rcallerservice'
-    version '1.1.0'
+    version '1.1.1-SNAPSHOT'
 
     apply plugin: 'org.jetbrains.kotlin.jvm'
     apply plugin: 'java'
@@ -17,6 +18,7 @@ subprojects {
 
     repositories {
         mavenCentral()
+        mavenLocal()
     }
 
     sourceCompatibility = 11
