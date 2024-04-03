@@ -19,7 +19,7 @@ DIR="$(dirname "$PRG")"
 cd "${DIR}"
 
 IMAGE_NAME=kopilov/rcallerservice
-IMAGE_VERSION=1.1.0
+IMAGE_VERSION=1.1.1
 
 #LOCAL_PROXY=http://10.126.6.77:3128
 

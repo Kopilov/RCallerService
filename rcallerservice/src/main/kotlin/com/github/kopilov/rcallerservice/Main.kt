@@ -8,7 +8,6 @@ import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Options
 import org.apache.commons.pool2.impl.GenericObjectPool
-import org.glassfish.hk2.utilities.binding.AbstractBinder
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory
 import com.github.kopilov.rcallerpool.RCallerContainer
 import com.github.kopilov.rcallerpool.RDependencies

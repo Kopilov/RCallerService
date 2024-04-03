@@ -21,4 +21,4 @@ cd "${DIR}"
 rm -f rcallerservice.jar
 ../gradlew -b ../build.gradle clean
 ../gradlew -b ../build.gradle build
-find ../rcallerservice/build -name "rcallerservice*jar" -exec cp {} ./rcallerservice.jar \;
+find ../rcallerservice/build -name "rcallerservice*jar" ! -name "*sources.jar" ! -name "*javadoc.jar" -exec cp {} ./rcallerservice.jar \;

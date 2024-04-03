@@ -3,7 +3,7 @@ ARG DOCKER_IMAGE=kopilov/rcallerservice:base-$IMAGE_VERSION
 FROM $DOCKER_IMAGE
 ARG IMAGE_VERSION
 
-RUN apt-get install -yq openjdk-11-jdk-headless
+RUN apt-get install -yq openjdk-21-jdk-headless
 
 COPY .  /
 RUN ./gradlew build && cp "rcallerservice/build/libs/rcallerservice-${IMAGE_VERSION}.jar" /tmp/rcallerservice.jar && cp /scripts/rcallerservice.sh /tmp

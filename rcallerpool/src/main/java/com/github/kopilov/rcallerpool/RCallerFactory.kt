@@ -3,7 +3,6 @@ package com.github.kopilov.rcallerpool
 import org.apache.commons.pool2.PooledObject
 import org.apache.commons.pool2.PooledObjectFactory
 import org.apache.commons.pool2.impl.DefaultPooledObject
-import java.util.prefs.Preferences
 
 /**
  * Use this class to init new pool (manually or by [createRCallerPool] method).

@@ -1,4 +1,4 @@
-ARG DOCKER_IMAGE=ubuntu:focal
+ARG DOCKER_IMAGE=ubuntu:jammy
 FROM $DOCKER_IMAGE
 
 #Configure Ubuntu
@@ -15,7 +15,7 @@ RUN rm -f /etc/localtime
 RUN dpkg-reconfigure -f noninteractive tzdata
 
 # Install Java
-RUN apt-get install -yq openjdk-11-jre-headless
+RUN apt-get install -yq openjdk-21-jre-headless
 # Install R
 RUN apt-get install -yq r-base r-base-dev r-cran-curl r-cran-devtools
 
